@@ -7,7 +7,7 @@ function IndexCtrl($scope, $http) {
 }
  
 function AddPostCtrl($scope, $http, $location) {
-  //$scope.form = {};
+  
   $scope.submitPost = function () {
     $http.post('/api/post', $scope.form).
       success(function(data) {
@@ -21,6 +21,7 @@ function ReadPostCtrl($scope, $http, $routeParams) {
     success(function(data, status) {
       $scope.status = status;
       $scope.posts = data;
+      console.log(data);
       
     }).
     error(function(data, status) {
@@ -31,19 +32,14 @@ function ReadPostCtrl($scope, $http, $routeParams) {
 }
  
 function EditPostCtrl($scope, $http, $location, $routeParams) {
- // $scope.form = {};
   $http.get('/api/posts/' + $routeParams.pid).
     success(function(data, status) {
       $scope.status = status;
-      //$scope.form = data;
-      editText = data[0];
-      $scope.editForm = editText;
-      $scope.posts = data;
-      console.log(data);
-    });
+      $scope.post = data;
+  });
     
   $scope.editPost = function () {
-    $http.put('/api/post/' + $routeParams.pid, $scope.form).
+    $http.put('/api/posts/' + $routeParams.pid, $scope.post).
       success(function(data) {
         $location.url('/readPost/' + $routeParams.pid);
       });
@@ -51,15 +47,15 @@ function EditPostCtrl($scope, $http, $location, $routeParams) {
 }
  
 function DeletePostCtrl($scope, $http, $location, $routeParams) {
-  $http.get('/api/post/' + $routeParams.id).
+  $http.get('/api/posts/' + $routeParams.pid).
     success(function(data) {
-      $scope.post = data.post;
+      $scope.post = data;
     });
     
   $scope.deletePost = function () {
-    $http.delete('/api/post/' + $routeParams.id).
+    $http.delete('/api/posts/' + $routeParams.pid).
       success(function(data) {
-        $location.url('/');
+        $location.path('/');
       });
   };
   
