@@ -8,7 +8,7 @@ angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives'])
     	.when('/addPost', {templateUrl: 'partials/addPost', controller: AddPostCtrl})
     	.when('/readPost/:pid', {templateUrl: 'partials/readPost', controller: ReadPostCtrl})
     	.when('/editPost/:pid', {templateUrl: 'partials/editPost', controller: EditPostCtrl})
-    	.when('/deletePost/:id', {templateUrl: 'partials/deletePost', controller: DeletePostCtrl})
+    	.when('/deletePost/:pid', {templateUrl: 'partials/deletePost', controller: DeletePostCtrl})
     	.otherwise({redirectTo: '/'});
     $locationProvider.html5Mode(true);
   }]);
