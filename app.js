@@ -12,9 +12,9 @@ var mysql = require('mysql');
 var database = 'blogposts';
 var client = mysql.createClient({
   user: 'root',
-  password: 'password',
+  password: 'mogee',
   host: 'localhost',
-  port: '',
+  port: '3306',
   database: 'blogposts'
 });
 
@@ -47,64 +47,49 @@ app.configure('production', function(){
 app.get('/', routes.index);
 app.get('/partials/:name', routes.partials);
 
-// JSON API
+/**** JSON API ****/
 
 // GET ALL
 
 app.get('/api/posts', function (req, res) {
 
-var posts = [];
-
-  client.query('SELECT * FROM posts',
-  function (err, results, fields) {
-    if (err) {
-      throw err;
-    }
-    console.log(results);
-    //var deposts = _.first(results, [1]);
-    //res.send(deposts);
-    //console.log(fields);
-    //var json = JSON.stringify(results);
-    //res.json(results);
-    res.send(results);
-    //client.end();
-    }
-  );
+     client.query('SELECT * FROM posts',
+        function (err, results, fields) {
+            if (err) {
+                res.send(err);
+            }
+            console.log(results);
+            res.json(results);
+        }
+    );
 });
 
 // GET
 
 app.get('/api/posts/:pid', function (req, res) {
+
   var pid = req.params.pid;
+
   client.query('SELECT * FROM posts WHERE id = ?', [pid],
   function (err, results, fields) {
     if (err) {
-      throw err;
+      res.send(err);
     }
     console.log("--- Specific Post ---");
     console.log(results);
-    //var deposts = _.first(results, [1]);
-    var result = JSON.stringify(results);
-    res.end(result);
-
-    if (results) {
-      //res.send(results);
-      console.log("Results exists");
-    } else {
-      res.json(false);
-      console.log("Nothing Returned");
-    }
     
+    res.json(_.first(results));
+           
     }
   );
 });
 
 // POST
 
-app.post('/api/post', function (req, res) {
+app.post('/api/post', function(req, res) {
 
   var ptitle = req.body.title;
-  var pposts = req.body.text;
+  var pposts = req.body.posts;
   client.query('INSERT INTO posts SET title = ?, posts = ?', [ptitle, pposts]);
     res.send(req.body);
 });
@@ -112,25 +97,40 @@ app.post('/api/post', function (req, res) {
 // PUT
 
 app.put('/api/posts/:pid', function(req, res) {
+
   var ptitle = req.body.title;
-  var pposts = req.body.text;
+  var pposts = req.body.posts;
   var pid = req.params.pid;
+
   client.query('UPDATE posts SET title = ?, posts = ? WHERE id = ?', [ptitle, pposts, pid],
   function (err, results, fields) {
     if (err) {
-      throw err;
+      res.send(err);
     }
-    res.json(results);
+    //console.log(results);
+    //res.json(results);
     //req.body = results;
-    console.log(results);
+    
     res.send(req.body);
     
     }
   );
 });
 
+// DELETE
 
-app.delete('/api/post/:id', api.deletePost);
+app.delete('/api/posts/:pid', function (req, res) {
+
+  var pid = req.params.pid;
+  client.query('DELETE FROM posts WHERE id = ?', [pid],
+  function (err, results, fields) {
+    if (err) {
+      res.send(err);
+    } else {
+      console.log(results.affectedRows);
+    }
+  });
+});
 
 // redirect all others to the index (HTML5 history)
 app.get('*', routes.index);
