@@ -12,7 +12,7 @@ var mysql = require('mysql');
 var database = 'blogposts';
 var client = mysql.createClient({
   user: 'root',
-  password: 'mogee',
+  password: 'password',
   host: 'localhost',
   port: '3306',
   database: 'blogposts'
